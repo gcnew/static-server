@@ -1,4 +1,12 @@
-[![Build Status](https://secure.travis-ci.org/nbluis/static-server.svg?branch=master)](http://travis-ci.org/nbluis/static-server)
+
+# WARNING
+
+This is a fork of the hugely popular [`static-server`](https://github.com/nbluis/static-server/) package by [`nbluis`](https://github.com/nbluis). Please use the original instead.
+
+If you wonder what the changesin my fork are:
+ - all external dependencies are removed
+ - `.bin/static-server` has a lot of logic, now moved to the main source dir; the executable simply `require`s it
+ - the server is less spammy
 
 # Static-server has been retired 🌅
 

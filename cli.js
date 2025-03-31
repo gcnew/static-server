@@ -9,19 +9,21 @@ const DEFAULT_CACHE = false;
 const DEFAULT_OPEN = false;
 const DEFAULT_LOG_LEVEL = 'info';
 
-var path    = require("path");
-var pkg     = require('./package.json');
+const path    = require("path");
+const pkg     = require('./package.json');
 
-var StaticServer = require('./server.js');
+const StaticServer = require('./server.js');
 
 const options = parseOptions();
 const logLevel = options.logLevel;
 
 const server = new StaticServer(options);
 
+trace('Server config:', options);
+trace();
+
 server.start(function () {
-  warn('Server started:', chalk.cyan('http://localhost:' + options.port));
-  warn();
+  error('Server started at', chalk.cyan('http://localhost:' + options.port));
 
   return server;
 });
@@ -76,13 +78,6 @@ function trace(... parts) {
 }
 
 function info(... parts) {
-    if (logLevel === 'warn' || logLevel === 'error') {
-        return;
-    }
-    console.log(... parts);
-}
-
-function warn(... parts) {
     if (logLevel === 'error') {
         return;
     }
@@ -157,7 +152,7 @@ function printHelp() {
           -n, --not-found <filename>   the file not found template
           -c, --cors <pattern>         Cross Origin Pattern. Use "*" to allow all origins
           -z, --cache                  enable cache (http 304) responses (default: ${DEFAULT_CACHE})
-          -l, --log-level              trace | info | warn | error (default: ${DEFAULT_LOG_LEVEL})
+          -l, --log-level              trace | info | error (default: ${DEFAULT_LOG_LEVEL})
           -h, --help                   show this message
           -v, --version                show the version number
     `.replaceAll(/^ {8}/gm, '').trim());

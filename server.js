@@ -23,13 +23,13 @@ const MULTIPART_SEPARATOR = '--MULTIPARTSEPERATORaufielqbghgzwr';
 const NEWLINE = '\n';
 
 
-var EventEmitter = require('events').EventEmitter;
-var util         = require('util');
-var http         = require('http');
-var url          = require('url');
-var path         = require('path');
-var fs           = require('fs');
-var slice        = Array.prototype.slice;
+const EventEmitter = require('events').EventEmitter;
+const util         = require('util');
+const http         = require('http');
+const url          = require('url');
+const path         = require('path');
+const fs           = require('fs');
+const slice        = Array.prototype.slice;
 
 const MIME_TYPES = require('./mime-types.json');
 

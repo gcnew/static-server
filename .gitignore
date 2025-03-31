@@ -1,15 +1,2 @@
-lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
-*.swp
-*.tgz
-
-npm-debug.log
-coverage
 node_modules
 .DS_Store

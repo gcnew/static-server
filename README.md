@@ -1,14 +1,17 @@
 
-# WARNING
+# Disclaimer
 
 This is a fork of the hugely popular [`static-server`](https://github.com/nbluis/static-server/) package by [`nbluis`](https://github.com/nbluis). Please use the original instead.
 
-If you wonder what the changesin my fork are:
- - all external dependencies are removed
- - `.bin/static-server` has a lot of logic, now moved to the main source dir; the executable simply `require`s it
- - the server is less spammy
+## Changes
 
-# Static-server has been retired 🌅
+The goal of this fork is _zero external dependencies and minimal clutter (to facilitate auditability)_:
+ - all external dependencies are removed
+ - `.bin/static-server` had a lot of logic, which is now moved into `cli.js`; `.bin/static-server` simply `require('../cli.js')`
+ - the server is less spammy
+ - cleanup of unused (by my fork) files, including tests, etc
+
+## Static-server has been retired 🌅
 
 The static-server project started in mid-2014 when node.js didn't even have a stable version (node.js 0.8 Oo). It was born from a personal need that I had to serve static files locally to be able to work with browser APIs that do not allow access through the file protocol.
 

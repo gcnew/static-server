@@ -27,11 +27,11 @@ var EventEmitter = require('events').EventEmitter;
 var util         = require('util');
 var http         = require('http');
 var url          = require('url');
-var mime         = require('mime');
 var path         = require('path');
 var fs           = require('fs');
-var opn          = require('opn');
 var slice        = Array.prototype.slice;
+
+const MIME_TYPES = require('./mime-types.json');
 
 
 /**
@@ -55,7 +55,6 @@ Options are :
       - index      the default index file to server for a directory (default 'index.html')
       - notFound   the 404 error template
    - noCache       disables 304 responses
-   - open          open server in the local browser
 
 @param options {Object}
 */
@@ -82,7 +81,6 @@ function StaticServer(options) {
   };
   // the arguments parser converts `--no-XXXX` to `XXXX` with a value of false;
   this.noCache = !options.cache;
-  this.open = options.open
 
   if (options.index) {
     console.log("options.index is now deprecated please use options.templates.index instead.");
@@ -95,7 +93,6 @@ function StaticServer(options) {
     writable: true,
     value: null
   });
-
 }
 util.inherits(StaticServer, EventEmitter);
 
@@ -112,9 +109,6 @@ Start listening on the given host:port
 */
 StaticServer.prototype.start = function start(callback) {
   this._socket = http.createServer(requestHandler(this)).listen(this.port, this.host, callback);
-  if(this.open && this.port){
-    opn('http://localhost:' + this.port);
-  }
 }
 
 
@@ -430,7 +424,7 @@ function sendError(server, req, res, err, status, message) {
     });
 
     res.status = status;
-    res.headers['Content-Type'] = mime.lookup('text');
+    res.headers['Content-Type'] = mime(server, 'text');
 
     res.writeHead(status, res.headers);
     res.write(message);
@@ -456,7 +450,7 @@ function sendFile(server, req, res, stat, file) {
   var headersSent = false;
   var contentParts = parseRanges(req, res, stat.size);
   var streamOptions = { flags: 'r' };
-  var contentType = mime.lookup(file);
+  var contentType = mime(server, file);
   var rangeIndex = 0;
 
   if (!contentParts) {
@@ -535,4 +529,14 @@ function sendFile(server, req, res, stat, file) {
     })();
   }
 
+}
+
+function mime(server, fp) {
+    const ext = path.extname(fp).replace(/^\./, '') || path.basename(fp);
+
+    if (!MIME_TYPES[ext]) {
+        server.emit('mimetype-not-found', ext);
+    }
+
+    return MIME_TYPES[ext] || 'application/octet-stream';
 }

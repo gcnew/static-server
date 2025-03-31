@@ -19,11 +19,8 @@ const logLevel = options.logLevel;
 
 const server = new StaticServer(options);
 
-initTerminateHandlers();
-
 server.start(function () {
   warn('Server started:', chalk.cyan('http://localhost:' + options.port));
-  info('Press', chalk.yellow.bold('Ctrl+C'), 'to shutdown.');
   warn();
 
   return server;
@@ -38,14 +35,11 @@ server.on('symbolicLink', function (link, file) {
 });
 
 server.on('response', function (req, res, err, file, stat) {
-  var relFile;
-  var nrmFile;
-
   if (res.status >= 400) {
     error(chalk.gray('-->'), chalk.blue('[' + req.method + ']'), chalk.red(res.status), req.path, '(' + req.elapsedTime + ')');
   } else if (file) {
-    relFile = path.relative(server.rootPath, file);
-    nrmFile = path.normalize(req.path.substring(1));
+    const relFile = path.relative(server.rootPath, file);
+    const nrmFile = path.normalize(req.path.substring(1));
 
     info(
         chalk.gray('-->'),
@@ -72,44 +66,6 @@ server.on('response', function (req, res, err, file, stat) {
 server.on('mimetype-not-found', function (ext) {
     error(chalk.bold.red('!!!'), 'Mime type not found for ext:', chalk.red(ext));
 });
-
-/**
-Prepare the 'exit' handler for the program termination
-*/
-function initTerminateHandlers() {
-  var readLine;
-
-  if (process.platform === "win32"){
-    readLine = require("readline");
-
-    readLine.createInterface ({
-      input: process.stdin,
-      output: process.stdout
-    }).on("SIGINT", function () {
-      process.emit("SIGINT");
-    });
-  }
-
-  // handle INTERRUPT (CTRL+C) and TERM/KILL signals
-  process.on('exit', function () {
-    if (server) {
-      warn('Shutting down...\n');
-      server.stop();
-    }
-  });
-
-  process.on('SIGINT', function () {
-    console.log();
-    trace(chalk.yellow.bold('SIGINT'), 'detected');
-    process.exit();
-  });
-
-  process.on('SIGTERM', function () {
-    console.log();
-    trace(chalk.yellow.bold('SIGTERM'), 'detected');
-    process.exit(0);
-  });
-}
 
 
 function trace(... parts) {

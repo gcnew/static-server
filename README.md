@@ -3,6 +3,22 @@
 
 This is a fork of the hugely popular [`static-server`](https://github.com/nbluis/static-server/) package by [`nbluis`](https://github.com/nbluis). Please use the original instead.
 
+## Example usage
+
+```bash
+# run http server in the current dir
+static-server
+
+# run http server in a specified dir
+static-server --dir <path-to-dir>
+
+# run https server in the current dir
+STATIC_SERVER_KEY="$(< key-file.pem)" STATIC_SERVER_CERT="$(< cert-file.pem)" static-server --https
+
+# run https server in a specified dir
+STATIC_SERVER_KEY="$(< key-file.pem)" STATIC_SERVER_CERT="$(< cert-file.pem)" static-server --https --dir <path-to-dir>
+```
+
 ## Changes
 
 The goal of this fork is _zero external dependencies and minimal clutter (to facilitate auditability)_:
@@ -10,6 +26,9 @@ The goal of this fork is _zero external dependencies and minimal clutter (to fac
  - `.bin/static-server` had a lot of logic, which is now moved into `cli.js`; `.bin/static-server` simply `require('../cli.js')`
  - the server is less spammy
  - cleanup of unused (by my fork) files, including tests, etc
+ - removed the `-d, --debug` option, use the log level instead
+ - added `-d, --dir` to configure the root directory explicitly (no-longer last arg)
+ - added `-s, --https` to force an https server (requires the `STATIC_SERVER_KEY` and `STATIC_SERVER_CERT` env vars to be set)
 
 ## Static-server has been retired 🌅
 
@@ -45,12 +64,13 @@ A simple http server to serve static resource files from a local directory.
     -h, --help                 output usage information
     -V, --version              output the version number
     -p, --port <n>             the port to listen to for incoming HTTP connections
+    -s, --https                force HTTPS server, needs STATIC_SERVER_KEY and STATIC_SERVER_CERT env variables
+    -d, --dir <dir>            the root directory to use (default: <current-dir>)
     -i, --index <filename>     the default index file if not specified
     -f, --follow-symlink       follow links, otherwise fail with file not found
-    -d, --debug                enable to show error messages
     -n, --not-found <filename> the error 404 file
     -c, --cors <pattern>       Cross Origin Pattern. Use "*" to allow all origins
-    -z, --no-cache           disable cache (http 304) responses.
+    -z, --no-cache             disable cache (http 304) responses.
     -o, --open                 open server in the local browser
 
 ## Using as a node module

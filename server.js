@@ -26,6 +26,7 @@ const NEWLINE = '\n';
 const EventEmitter = require('events').EventEmitter;
 const util         = require('util');
 const http         = require('http');
+const https        = require('https');
 const url          = require('url');
 const path         = require('path');
 const fs           = require('fs');
@@ -72,6 +73,9 @@ function StaticServer(options) {
   this.name = options.name;
   this.host = options.host;
   this.port = options.port;
+  this.https = options.https;
+  this.httpsKey = options.httpsKey;
+  this.httpsCert = options.httpsCert;
   this.cors = options.cors;
   this.rootPath = path.resolve(options.rootPath);
   this.followSymlink = !!options.followSymlink;
@@ -108,7 +112,17 @@ Start listening on the given host:port
 @param callback {Function}    the function to call once the server is ready
 */
 StaticServer.prototype.start = function start(callback) {
-  this._socket = http.createServer(requestHandler(this)).listen(this.port, this.host, callback);
+  const server = this.https
+    ? https.createServer(
+        {
+          key: this.httpsKey,
+          cert: this.httpsCert
+        },
+        requestHandler(this)
+      )
+    : http.createServer(requestHandler(this));
+
+  this._socket = server.listen(this.port, this.host, callback);
 }
 
 

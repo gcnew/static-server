@@ -41,7 +41,13 @@ server.on('symbolicLink', function (link, file) {
 
 server.on('response', function (req, res, err, file, stat) {
   if (res.status >= 400) {
-    error(chalk.gray('-->'), chalk.blue('[' + req.method + ']'), chalk.red(res.status), req.path, '(' + req.elapsedTime + ')');
+    error(
+        chalk.gray('-->'),
+        chalk.blue('[' + req.method + ']'),
+        chalk.red(res.status),
+        req.path,
+        chalk.gray('(' + req.elapsedTime + ')')
+    );
   } else if (file) {
     const relFile = path.relative(server.rootPath, file);
     const nrmFile = path.normalize(req.path.substring(1));
@@ -50,7 +56,7 @@ server.on('response', function (req, res, err, file, stat) {
         chalk.gray('-->'),
         chalk.blue('[' + req.method + ']'),
         chalk.green(res.status, StaticServer.STATUS_CODES[res.status]),
-        req.path + (nrmFile !== relFile ? (' ' + chalk.dim('(' + relFile + ')')) : ''),
+        req.path + (nrmFile !== relFile ? (' ' + chalk.gray('(' + relFile + ')')) : ''),
         chalk.gray(formatSize(stat.size) + ' (' + req.elapsedTime + ')')
     );
   } else {
